@@ -58,9 +58,9 @@ comments:
   giscus:
     repo: "tanboning1118/tanboning1118.github.io" # 您的仓库地址
     # 以下几项需要您去 Giscus 官网配置后填入
-    repo_id: # 在 Giscus 官网获取
-    category: # 在 Giscus 官网获取
-    category_id: # 在 Giscus 官网获取
+    repo_id:"R_kgDOP8rInA" # 在 Giscus 官网获取
+    category: "General"# 在 Giscus 官网获取
+    category_id: "DIC_kwDOP8rInM4CwRwq"# 在 Giscus 官网获取
     mapping: "pathname"
     strict: "0"
     reactions_enabled: "1"
