@@ -1,37 +1,58 @@
-# --- Minimal Mistakes 主題設定 ---
+# ---------------- 极简核心配置 ----------------
 
-# 網站基本設定
-title: "我的技术博客"
-description: "一个记录学习和生活的空间"
-encoding: utf-8
-exclude: [README.md, Gemfile, Gemfile.lock]
+# 语言: zh-CN 代表简体中文
+lang: zh-CN
 
-# 主題設定 (使用 Gem-based theme)
-theme: minimal-mistakes-jekyll
-minimal_mistakes_skin: "air" 
+# 网站网址 (非常重要！)
+url: "https://tanboning1118.github.io"
 
-# 評論系統設定 (已填入您的 Giscus ID)
-comments:
-  provider: "giscus"
-  giscus:
-    repo: "tanboning1118/tanboning1118.github.io"
-    repo_id: "R_kgDOP8rInA"
-    category: "General"
-    category_id: "DIC_kwDOP8rInM4CwRwq"
-    mapping: "pathname"
-    strict: "0"
-    reactions_enabled: "1"
-    emit_metadata: "0"
-    input_position: "bottom"
-    lang: "zh-CN"
+# 网站标题
+title: tanboning1118的博客
 
-# 作者資訊
-author:
-  name: "tanboning1118"
-  avatar: "https://github.com/tanboning1118.png"
-  bio: "美食爱好者"
-  location: "Shanghai"
+# 网站副标题
+tagline: 学习与记录
+
+# 您的名字或昵称
+author: tanboning1118
+
+# 侧边栏头像 (会自动抓取您的 GitHub 头像)
+avatar: https://github.com/tanboning1118.png
+
+# 社交链接
+social:
+  name: tanboning1118
   links:
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/tanboning1118"
+    - https://github.com/tanboning1118
+
+# ---------------- 以下为主题运行所需，无需修改 ----------------
+
+# 时区
+timezone: Asia/Shanghai
+
+# 主题模式 (留空则跟随系统，提供深色/亮色切换)
+theme_mode:
+
+# 分页
+paginate: 10
+
+# Jekyll 核心配置
+baseurl: ""
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: false # 已禁用评论
+      toc: true
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - docs
+  - tools
+  - README.md
+  - LICENSE
+  - "*.config.js"
+  - "package*.json"
