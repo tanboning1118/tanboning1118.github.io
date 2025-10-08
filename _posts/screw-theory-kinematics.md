@@ -1,0 +1,73 @@
+---
+title: "掌握现代机器人学：基于旋量理论的正运动学"
+date: 2025-10-08 10:00:00 +0800
+category: 机器人学
+tags: [旋量理论, 机器人运动学, 正运动学, 指数积, PoE, 教程]
+author: Bathelor
+toc: true
+---
+
+使用旋量（Screw Theory）来表述含螺旋副（Screw Joints）的机器人末端位姿，是非常优雅且强大的方法。这种方法的核心就是**指数积（Product of Exponentials, PoE）**公式。
+
+与传统的D-H参数法相比，旋量法有几个显著优点：
+* **统一性**：无论是旋转关节、移动关节还是螺旋关节，都可以用统一的“旋量”概念来描述。
+* **直观性**：不需要为了满足D-H建模规则而建立复杂的中间坐标系，所有关节的运动轴都可以在一个固定的世界坐标系下描述。
+* **通用性**：非常适合描述串联、并联以及更复杂的机器人构型。
+
+下面分解如何使用旋量来表述。
+
+### 1. 核心概念：旋量 (Screw)
+
+一个旋量（在机器人运动学中也叫**螺旋轴 Screw Axis**）是一个六维向量 $S$，它完整地定义了一个刚体的瞬时运动。
+
+一个在世界坐标系 `{s}` 下定义的螺旋轴 $S$ 写成：
+
+$$S = \begin{pmatrix} \omega \\ v \end{pmatrix} \in \mathbb{R}^6$$
+
+其中：
+* $\omega \in \mathbb{R}^3$ 是一个三维向量，表示**旋转轴的方向**。对于纯移动关节，$\omega = 0$。对于旋转或螺旋关节，我们通常将其定义为单位向量。
+* $v \in \mathbb{R}^3$ 是一个三维向量，表示**线性运动**的部分。
+
+#### 如何确定不同关节的螺旋轴 S？
+
+我们在机器人的**零位姿（Zero Configuration）**下，确定每个关节的螺旋轴：
+
+* **旋转关节 (Revolute Joint)**:
+    * $\omega$: 关节旋转轴的方向向量（单位向量）。
+    * $q$: 轴线上任意一点，则 $v = -\omega \times q$。
+
+* **移动关节 (Prismatic Joint)**:
+    * $\omega = 0$。
+    * $v$: 关节移动方向的单位向量。
+
+* **螺旋关节 (Screw Joint)**:
+    * $\omega$: 螺旋轴的方向向量（单位向量）。
+    * $h$ (螺距 pitch): 每旋转 $2\pi$ 弧度沿轴线移动的距离。
+    * $q$: 轴线上任意一点，则 $v = -\omega \times q + \frac{h}{2\pi}\omega$。
+
+### 2. 核心工具：指数映射 (Exponential Map)
+
+指数映射将螺旋轴 $S$ 和关节变量 $\theta$ 转换为一个 4x4 的齐次变换矩阵 $T$。对于任意螺旋轴 $S=(\omega, v)$，其对应的变换矩阵为：
+
+$$T(\theta) = e^{[\mathcal{S}]\theta} = \begin{pmatrix} R(\theta) & p(\theta) \\ 0 & 1 \end{pmatrix}$$
+
+其中，旋转矩阵 $R(\theta)$ 和平移向量 $p(\theta)$ 为：
+
+* **旋转部分 (Rodrigues' 公式):**
+    $$R(\theta) = e^{[\omega]\theta} = I + \sin(\theta)[\omega] + (1 - \cos(\theta))[\omega]^2$$
+
+* **平移部分:**
+    $$p(\theta) = \left( I\theta + (1-\cos(\theta))[\omega] + (\theta - \sin(\theta))[\omega]^2 \right) v$$
+
+    * $[\omega]$ 是 $\omega$ 向量的3x3反对称矩阵: $[\omega] = \begin{pmatrix} 0 & -\omega_z & \omega_y \\ \omega_z & 0 & -\omega_x \\ -\omega_y & \omega_x & 0 \end{pmatrix}$
+
+### 3. 核心公式：指数积 (Product of Exponentials, PoE)
+
+对于一个 n 自由度的串联机器人，其末端位姿 $T_{sb}$ 可以表示为：
+
+$$T_{sb}(\theta) = e^{[\mathcal{S}_1]\theta_1} e^{[\mathcal{S}_2]\theta_2} \cdots e^{[\mathcal{S}_n]\theta_n} M$$
+
+* $\theta_i$: 第 $i$ 个关节的变量（角度或距离）。
+* $S_i$: 第 $i$ 个关节的螺旋轴（在零位姿下，于世界坐标系 `{s}` 中定义）。
+* $e^{[\mathcal{S}_i]\theta_i}$: 第 $i$ 个关节运动产生的4x4齐次变换。
+* $M$: 机器人在零位姿时，末端坐标系 `{b}` 相对于世界坐标系 `{s}` 的**初始位姿**，即 $M=T_{sb}(0)$。
