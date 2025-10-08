@@ -5,6 +5,7 @@ category: 机器人学
 tags: [旋量理论, 机器人运动学, 正运动学, 指数积, PoE, 教程]
 author: Bathelor
 toc: true
+math: true 
 ---
 
 使用旋量（Screw Theory）来表述含螺旋副（Screw Joints）的机器人末端位姿，是非常优雅且强大的方法。这种方法的核心就是**指数积（Product of Exponentials, PoE）**公式。
