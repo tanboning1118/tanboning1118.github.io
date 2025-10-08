@@ -1,6 +1,7 @@
 ---
 title: "掌握现代机器人学：基于旋量理论的正运动学"
 date: 2025-10-08 10:00:00 +0800
+author: Bathelor
 category: 机器人学
 tags: [旋量理论, 机器人运动学, 正运动学, 指数积, PoE, 教程]
 toc: true
