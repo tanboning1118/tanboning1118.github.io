@@ -143,18 +143,43 @@ $$M = \begin{pmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 8 \\ 0 & 0 & 1 & 5 \\ 0 & 0 
 
 #### 步骤 3: 指数映射 `e^[Sᵢ]θᵢ`
 
+本步骤将详细演算每个关节的变换矩阵。
+
 * **关节 1 ($\theta_1=\pi$)**:
-    对于纯螺旋运动（$v$ 平行于 $\omega$），平移公式简化为 $p(\theta)=v\theta$。
-    $R_1(\pi) = \text{Rot}(z, \pi)$, $p_1(\pi) = v_1 \pi = (0,0,1/\pi) \cdot \pi = (0,0,1)^T$。
-    $$T_1 = e^{[\mathcal{S}_1]\pi} = \begin{pmatrix} -1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    * **旋转部分**: $R_1(\pi) = \text{Rot}(z, \pi) = \begin{pmatrix}-1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{pmatrix}$。
+    * **平移部分**: 使用通用公式 $p(\theta) = (I\theta + (1-\cos\theta)[\omega] + (\theta - \sin\theta)[\omega]^2) v$。
+        已知 $\omega_1=(0,0,1), v_1=(0,0,1/\pi), \theta_1=\pi$。
+        $[\omega_1]v_1 = \begin{pmatrix}0&-1&0\\1&0&0\\0&0&0\end{pmatrix} \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} = \begin{pmatrix}0\\0\\0\end{pmatrix}$。
+        $[\omega_1]^2v_1 = \begin{pmatrix}-1&0&0\\0&-1&0\\0&0&0\end{pmatrix} \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} = \begin{pmatrix}0\\0\\0\end{pmatrix}$。
+        $p_1(\pi) = (I\pi)v_1 + (1-\cos\pi)[\omega_1]v_1 + (\pi-\sin\pi)[\omega_1]^2v_1$
+        $p_1(\pi) = \pi \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} + 2 \begin{pmatrix}0\\0\\0\end{pmatrix} + \pi \begin{pmatrix}0\\0\\0\end{pmatrix} = \begin{pmatrix}0\\0\\1\end{pmatrix}$。
+    * **组合矩阵 $T_1$**:
+        $$T_1 = \begin{pmatrix} -1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    > 💡 **新手提示**: 对于关节1这种纯螺旋运动（即线性速度向量 `v` 与旋转轴 `ω` 平行），`[ω]v` 和 `[ω]²v` 将始终为零向量。因此，平移公式会直接简化为 `p(θ) = Iθv = vθ`。在熟练后，您可以直接使用这个捷径。
 
 * **关节 2 ($\theta_2=\pi/2$)**:
-    $R_2(\pi/2) = \text{Rot}(y, \pi/2)$。使用平移公式 $p(\theta) = (I\theta + \dots)v$ 计算得 $p_2(\pi/2) = (-10, 0, 10)^T$。
-    $$T_2 = e^{[\mathcal{S}_2]\pi/2} = \begin{pmatrix} 0 & 0 & 1 & -10 \\ 0 & 1 & 0 & 0 \\ -1 & 0 & 0 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    * **旋转部分**: $R_2(\pi/2) = \text{Rot}(y, \pi/2) = \begin{pmatrix}0 & 0 & 1 \\ 0 & 1 & 0 \\ -1 & 0 & 0\end{pmatrix}$。
+    * **平移部分**:
+        已知 $\omega_2=(0,1,0), v_2=(-10,0,0), \theta_2=\pi/2$。
+        $[\omega_2]v_2 = \begin{pmatrix}0&0&1\\0&0&0\\-1&0&0\end{pmatrix} \begin{pmatrix}-10\\0\\0\end{pmatrix} = \begin{pmatrix}0\\0\\10\end{pmatrix}$。
+        $[\omega_2]^2v_2 = \begin{pmatrix}-1&0&0\\0&0&0\\0&0&-1\end{pmatrix} \begin{pmatrix}-10\\0\\0\end{pmatrix} = \begin{pmatrix}10\\0\\0\end{pmatrix}$。
+        $p_2(\pi/2) = (I\frac{\pi}{2})v_2 + (1-\cos\frac{\pi}{2})[\omega_2]v_2 + (\frac{\pi}{2}-\sin\frac{\pi}{2})[\omega_2]^2v_2$
+        $p_2(\pi/2) = \frac{\pi}{2}\begin{pmatrix}-10\\0\\0\end{pmatrix} + 1\begin{pmatrix}0\\0\\10\end{pmatrix} + (\frac{\pi}{2}-1)\begin{pmatrix}10\\0\\0\end{pmatrix}$
+        $p_2(\pi/2) = \begin{pmatrix}-5\pi\\0\\0\end{pmatrix} + \begin{pmatrix}0\\0\\10\end{pmatrix} + \begin{pmatrix}5\pi-10\\0\\0\end{pmatrix} = \begin{pmatrix}-10\\0\\10\end{pmatrix}$。
+    * **组合矩阵 $T_2$**:
+        $$T_2 = \begin{pmatrix} 0 & 0 & 1 & -10 \\ 0 & 1 & 0 & 0 \\ -1 & 0 & 0 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 * **关节 3 ($\theta_3=-\pi$)**:
-    $R_3(-\pi) = \text{Rot}(x, -\pi)$。使用平移公式计算得 $p_3(-\pi) = (0, 10, 10)^T$。
-    $$T_3 = e^{[\mathcal{S}_3](-\pi)} = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 10 \\ 0 & 0 & -1 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    * **旋转部分**: $R_3(-\pi) = \text{Rot}(x, -\pi) = \begin{pmatrix}1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & -1\end{pmatrix}$。
+    * **平移部分**:
+        已知 $\omega_3=(1,0,0), v_3=(0,5,-5), \theta_3=-\pi$。
+        $[\omega_3]v_3 = \begin{pmatrix}0&0&0\\0&0&-1\\0&1&0\end{pmatrix} \begin{pmatrix}0\\5\\-5\end{pmatrix} = \begin{pmatrix}0\\5\\5\end{pmatrix}$。
+        $[\omega_3]^2v_3 = \begin{pmatrix}0&0&0\\0&-1&0\\0&0&-1\end{pmatrix} \begin{pmatrix}0\\5\\-5\end{pmatrix} = \begin{pmatrix}0\\-5\\5\end{pmatrix}$。
+        $p_3(-\pi) = (I(-\pi))v_3 + (1-\cos(-\pi))[\omega_3]v_3 + (-\pi-\sin(-\pi))[\omega_3]^2v_3$
+        $p_3(-\pi) = (-\pi)\begin{pmatrix}0\\5\\-5\end{pmatrix} + 2\begin{pmatrix}0\\5\\5\end{pmatrix} + (-\pi)\begin{pmatrix}0\\-5\\5\end{pmatrix}$
+        $p_3(-\pi) = \begin{pmatrix}0\\-5\pi\\5\pi\end{pmatrix} + \begin{pmatrix}0\\10\\10\end{pmatrix} + \begin{pmatrix}0\\5\pi\\-5\pi\end{pmatrix} = \begin{pmatrix}0\\10\\10\end{pmatrix}$。
+    * **组合矩阵 $T_3$**:
+        $$T_3 = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 10 \\ 0 & 0 & -1 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 #### 步骤 4: 末端位姿 `T_sb(4)`
 
