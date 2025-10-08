@@ -106,9 +106,9 @@ $$T_{sb}(\theta) = e^{[\mathcal{S}_1]\theta_1} e^{[\mathcal{S}_2]\theta_2} \cdot
 * **关节1**: 螺旋关节, 螺距 $h=2$。
 * **目标**: 求 $t=4$s 时的末端位姿 $T_{sb}(4)$。
 * **关节变量**:
-    * $\theta_1(4) = (\pi/4) \cdot 4 = \pi$ rad
-    * $\theta_2(4) = (\pi/8) \cdot 4 = \pi/2$ rad
-    * $\theta_3(4) = (-\pi/4) \cdot 4 = -\pi$ rad
+    * $\theta_1(4) = \pi$ rad
+    * $\theta_2(4) = \pi/2$ rad
+    * $\theta_3(4) = -\pi$ rad
 
 #### 步骤 1: 初始位姿 `M`
 
@@ -146,40 +146,51 @@ $$M = \begin{pmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 8 \\ 0 & 0 & 1 & 5 \\ 0 & 0 
 本步骤将详细演算每个关节的变换矩阵。
 
 * **关节 1 ($\theta_1=\pi$)**:
-    * **旋转部分**: $R_1(\pi) = \text{Rot}(z, \pi) = \begin{pmatrix}-1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{pmatrix}$。
-    * **平移部分**: 使用通用公式 $p(\theta) = (I\theta + (1-\cos\theta)[\omega] + (\theta - \sin\theta)[\omega]^2) v$。
-        已知 $\omega_1=(0,0,1), v_1=(0,0,1/\pi), \theta_1=\pi$。
-        $[\omega_1]v_1 = \begin{pmatrix}0&-1&0\\1&0&0\\0&0&0\end{pmatrix} \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} = \begin{pmatrix}0\\0\\0\end{pmatrix}$。
-        $[\omega_1]^2v_1 = \begin{pmatrix}-1&0&0\\0&-1&0\\0&0&0\end{pmatrix} \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} = \begin{pmatrix}0\\0\\0\end{pmatrix}$。
-        $p_1(\pi) = (I\pi)v_1 + (1-\cos\pi)[\omega_1]v_1 + (\pi-\sin\pi)[\omega_1]^2v_1$
-        $p_1(\pi) = \pi \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} + 2 \begin{pmatrix}0\\0\\0\end{pmatrix} + \pi \begin{pmatrix}0\\0\\0\end{pmatrix} = \begin{pmatrix}0\\0\\1\end{pmatrix}$。
-    * **组合矩阵 $T_1$**:
-        $$T_1 = \begin{pmatrix} -1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
-    > 💡 **新手提示**: 对于关节1这种纯螺旋运动（即线性速度向量 `v` 与旋转轴 `ω` 平行），`[ω]v` 和 `[ω]²v` 将始终为零向量。因此，平移公式会直接简化为 `p(θ) = Iθv = vθ`。在熟练后，您可以直接使用这个捷径。
+
+    **旋转部分 R₁:**
+    $R_1(\pi) = \text{Rot}(z, \pi) = \begin{pmatrix}-1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{pmatrix}$。
+
+    **平移部分 p₁:**
+    使用通用公式 $p(\theta) = (I\theta + (1-\cos\theta)[\omega] + (\theta - \sin\theta)[\omega]^2) v$。
+    已知 $\omega_1=(0,0,1)^T, v_1=(0,0,1/\pi)^T, \theta_1=\pi$。
+    $[\omega_1]v_1 = \begin{pmatrix}0\\0\\0\end{pmatrix}$，$[\omega_1]^2v_1 = \begin{pmatrix}0\\0\\0\end{pmatrix}$。
+    $$p_1(\pi) = (I\pi)v_1 + (1-\cos\pi)[\omega_1]v_1 + (\pi-\sin\pi)[\omega_1]^2v_1$$
+    $$p_1(\pi) = \pi \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} + 2 \begin{pmatrix}0\\0\\0\end{pmatrix} + \pi \begin{pmatrix}0\\0\\0\end{pmatrix} = \begin{pmatrix}0\\0\\1\end{pmatrix}$$
+
+    **组合矩阵 T₁**:
+    $$T_1 = \begin{pmatrix} -1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+
+    > 💡 **提示**: 对于关节1这种纯螺旋运动（即线性速度向量 `v` 与旋转轴 `ω` 平行），平移公式会直接简化为 `p(θ) = vθ`。不仅如此，当旋转轴是坐标轴时（如本例中的 `ω₁`），通用的罗德里格斯公式也会直接简化为您所熟知的基本旋转矩阵 `Rot(z, θ)`。
 
 * **关节 2 ($\theta_2=\pi/2$)**:
-    * **旋转部分**: $R_2(\pi/2) = \text{Rot}(y, \pi/2) = \begin{pmatrix}0 & 0 & 1 \\ 0 & 1 & 0 \\ -1 & 0 & 0\end{pmatrix}$。
-    * **平移部分**:
-        已知 $\omega_2=(0,1,0), v_2=(-10,0,0), \theta_2=\pi/2$。
-        $[\omega_2]v_2 = \begin{pmatrix}0&0&1\\0&0&0\\-1&0&0\end{pmatrix} \begin{pmatrix}-10\\0\\0\end{pmatrix} = \begin{pmatrix}0\\0\\10\end{pmatrix}$。
-        $[\omega_2]^2v_2 = \begin{pmatrix}-1&0&0\\0&0&0\\0&0&-1\end{pmatrix} \begin{pmatrix}-10\\0\\0\end{pmatrix} = \begin{pmatrix}10\\0\\0\end{pmatrix}$。
-        $p_2(\pi/2) = (I\frac{\pi}{2})v_2 + (1-\cos\frac{\pi}{2})[\omega_2]v_2 + (\frac{\pi}{2}-\sin\frac{\pi}{2})[\omega_2]^2v_2$
-        $p_2(\pi/2) = \frac{\pi}{2}\begin{pmatrix}-10\\0\\0\end{pmatrix} + 1\begin{pmatrix}0\\0\\10\end{pmatrix} + (\frac{\pi}{2}-1)\begin{pmatrix}10\\0\\0\end{pmatrix}$
-        $p_2(\pi/2) = \begin{pmatrix}-5\pi\\0\\0\end{pmatrix} + \begin{pmatrix}0\\0\\10\end{pmatrix} + \begin{pmatrix}5\pi-10\\0\\0\end{pmatrix} = \begin{pmatrix}-10\\0\\10\end{pmatrix}$。
-    * **组合矩阵 $T_2$**:
-        $$T_2 = \begin{pmatrix} 0 & 0 & 1 & -10 \\ 0 & 1 & 0 & 0 \\ -1 & 0 & 0 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+
+    **旋转部分 R₂:**
+    $R_2(\pi/2) = \text{Rot}(y, \pi/2) = \begin{pmatrix}0 & 0 & 1 \\ 0 & 1 & 0 \\ -1 & 0 & 0\end{pmatrix}$。
+
+    **平移部分 p₂:**
+    已知 $\omega_2=(0,1,0)^T, v_2=(-10,0,0)^T, \theta_2=\pi/2$。
+    $[\omega_2]v_2 = \begin{pmatrix}0\\0\\10\end{pmatrix}$，$[\omega_2]^2v_2 = \begin{pmatrix}10\\0\\0\end{pmatrix}$。
+    $$p_2(\pi/2) = (I\frac{\pi}{2})v_2 + (1-\cos\frac{\pi}{2})[\omega_2]v_2 + (\frac{\pi}{2}-\sin\frac{\pi}{2})[\omega_2]^2v_2$$
+    $$p_2(\pi/2) = \frac{\pi}{2}\begin{pmatrix}-10\\0\\0\end{pmatrix} + 1\begin{pmatrix}0\\0\\10\end{pmatrix} + (\frac{\pi}{2}-1)\begin{pmatrix}10\\0\\0\end{pmatrix}$$
+    $$p_2(\pi/2) = \begin{pmatrix}-5\pi\\0\\0\end{pmatrix} + \begin{pmatrix}0\\0\\10\end{pmatrix} + \begin{pmatrix}5\pi-10\\0\\0\end{pmatrix} = \begin{pmatrix}-10\\0\\10\end{pmatrix}$$
+
+    **组合矩阵 T₂**:
+    $$T_2 = \begin{pmatrix} 0 & 0 & 1 & -10 \\ 0 & 1 & 0 & 0 \\ -1 & 0 & 0 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 * **关节 3 ($\theta_3=-\pi$)**:
-    * **旋转部分**: $R_3(-\pi) = \text{Rot}(x, -\pi) = \begin{pmatrix}1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & -1\end{pmatrix}$。
-    * **平移部分**:
-        已知 $\omega_3=(1,0,0), v_3=(0,5,-5), \theta_3=-\pi$。
-        $[\omega_3]v_3 = \begin{pmatrix}0&0&0\\0&0&-1\\0&1&0\end{pmatrix} \begin{pmatrix}0\\5\\-5\end{pmatrix} = \begin{pmatrix}0\\5\\5\end{pmatrix}$。
-        $[\omega_3]^2v_3 = \begin{pmatrix}0&0&0\\0&-1&0\\0&0&-1\end{pmatrix} \begin{pmatrix}0\\5\\-5\end{pmatrix} = \begin{pmatrix}0\\-5\\5\end{pmatrix}$。
-        $p_3(-\pi) = (I(-\pi))v_3 + (1-\cos(-\pi))[\omega_3]v_3 + (-\pi-\sin(-\pi))[\omega_3]^2v_3$
-        $p_3(-\pi) = (-\pi)\begin{pmatrix}0\\5\\-5\end{pmatrix} + 2\begin{pmatrix}0\\5\\5\end{pmatrix} + (-\pi)\begin{pmatrix}0\\-5\\5\end{pmatrix}$
-        $p_3(-\pi) = \begin{pmatrix}0\\-5\pi\\5\pi\end{pmatrix} + \begin{pmatrix}0\\10\\10\end{pmatrix} + \begin{pmatrix}0\\5\pi\\-5\pi\end{pmatrix} = \begin{pmatrix}0\\10\\10\end{pmatrix}$。
-    * **组合矩阵 $T_3$**:
-        $$T_3 = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 10 \\ 0 & 0 & -1 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+
+    **旋转部分 R₃:**
+    $R_3(-\pi) = \text{Rot}(x, -\pi) = \begin{pmatrix}1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & -1\end{pmatrix}$。
+
+    **平移部分 p₃:**
+    已知 $\omega_3=(1,0,0)^T, v_3=(0,5,-5)^T, \theta_3=-\pi$。
+    $[\omega_3]v_3 = \begin{pmatrix}0\\5\\5\end{pmatrix}$，$[\omega_3]^2v_3 = \begin{pmatrix}0\\-5\\5\end{pmatrix}$。
+    $$p_3(-\pi) = (I(-\pi))v_3 + (1-\cos(-\pi))[\omega_3]v_3 + (-\pi-\sin(-\pi))[\omega_3]^2v_3$$
+    $$p_3(-\pi) = (-\pi)\begin{pmatrix}0\\5\\-5\end{pmatrix} + 2\begin{pmatrix}0\\5\\5\end{pmatrix} + (-\pi)\begin{pmatrix}0\\-5\\5\end{pmatrix}$$
+    $$p_3(-\pi) = \begin{pmatrix}0\\-5\pi\\5\pi\end{pmatrix} + \begin{pmatrix}0\\10\\10\end{pmatrix} + \begin{pmatrix}0\\5\pi\\-5\pi\end{pmatrix} = \begin{pmatrix}0\\10\\10\end{pmatrix}$$
+
+    **组合矩阵 T₃**:
+    $$T_3 = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 10 \\ 0 & 0 & -1 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 #### 步骤 4: 末端位姿 `T_sb(4)`
 
