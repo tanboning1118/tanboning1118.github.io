@@ -23,7 +23,7 @@ math: true
 
 一个在世界坐标系 `{s}` 下定义的螺旋轴 $S$ 写成：
 
-$$S = \begin{pmatrix} \omega \\ v \end{pmatrix} \in \mathbb{R}^6$$
+$$S = \begin{pmatrix} \omega \\\\ v \end{pmatrix} \in \mathbb{R}^6$$
 
 其中：
 * $\omega \in \mathbb{R}^3$ 是一个三维向量，表示**旋转轴的方向**。对于纯移动关节，$\omega = 0$。对于旋转或螺旋关节，我们通常将其定义为单位向量。
@@ -50,7 +50,7 @@ $$S = \begin{pmatrix} \omega \\ v \end{pmatrix} \in \mathbb{R}^6$$
 
 指数映射将螺旋轴 $S$ 和关节变量 $\theta$ 转换为一个 4x4 的齐次变换矩阵 $T$。对于任意螺旋轴 $S=(\omega, v)$，其对应的变换矩阵为：
 
-$$T(\theta) = e^{[\mathcal{S}]\theta} = \begin{pmatrix} R(\theta) & p(\theta) \\ 0 & 1 \end{pmatrix}$$
+$$T(\theta) = e^{[\mathcal{S}]\theta} = \begin{pmatrix} R(\theta) & p(\theta) \\\\ 0 & 1 \end{pmatrix}$$
 
 其中，旋转矩阵 $R(\theta)$ 和平移向量 $p(\theta)$ 为：
 
@@ -61,7 +61,7 @@ $$T(\theta) = e^{[\mathcal{S}]\theta} = \begin{pmatrix} R(\theta) & p(\theta) \\
     $$p(\theta) = \left( I\theta + (1-\cos(\theta))[\omega] + (\theta - \sin(\theta))[\omega]^2 \right) v$$
 
 * $[\omega]$ 是 $\omega$ 向量的3x3反对称矩阵:
-    $$[\omega] = \begin{pmatrix} 0 & -\omega_z & \omega_y \\ \omega_z & 0 & -\omega_x \\ -\omega_y & \omega_x & 0 \end{pmatrix}$$
+    $$[\omega] = \begin{pmatrix} 0 & -\omega_z & \omega_y \\\\ \omega_z & 0 & -\omega_x \\\\ -\omega_y & \omega_x & 0 \end{pmatrix}$$
 
 ### 3. 核心公式：指数积 (Product of Exponentials, PoE)
 
@@ -113,7 +113,7 @@ $$T_{sb}(\theta) = e^{[\mathcal{S}_1]\theta_1} e^{[\mathcal{S}_2]\theta_2} \cdot
 #### 步骤 1: 初始位姿 `M`
 
 根据该机器人的几何设定，其在零位姿下的末端位姿矩阵 `M` 为：
-$$M = \begin{pmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 8 \\ 0 & 0 & 1 & 5 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+$$M = \begin{pmatrix} 0 & -1 & 0 & 0 \\\\ 1 & 0 & 0 & 8 \\\\ 0 & 0 & 1 & 5 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 #### 步骤 2: 关节螺旋轴 `Sᵢ`
 
@@ -148,69 +148,69 @@ $$M = \begin{pmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 8 \\ 0 & 0 & 1 & 5 \\ 0 & 0 
 * **关节 1 ($\theta_1=\pi$)**:
 
     **旋转部分 R₁:**
-    $R_1(\pi) = \text{Rot}(z, \pi) = \begin{pmatrix}-1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 1\end{pmatrix}$。
+    $$R_1(\pi) = \text{Rot}(z, \pi) = \begin{pmatrix}-1 & 0 & 0 \\\\ 0 & -1 & 0 \\\\ 0 & 0 & 1\end{pmatrix}$$
 
     **平移部分 p₁:**
     使用通用公式 $p(\theta) = (I\theta + (1-\cos\theta)[\omega] + (\theta - \sin\theta)[\omega]^2) v$。
     已知 $\omega_1=(0,0,1)^T, v_1=(0,0,1/\pi)^T, \theta_1=\pi$。
-    $[\omega_1]v_1 = \begin{pmatrix}0\\0\\0\end{pmatrix}$，$[\omega_1]^2v_1 = \begin{pmatrix}0\\0\\0\end{pmatrix}$。
+    $[\omega_1]v_1 = \begin{pmatrix}0\\\\0\\\\0\end{pmatrix}$，$[\omega_1]^2v_1 = \begin{pmatrix}0\\\\0\\\\0\end{pmatrix}$。
     $$p_1(\pi) = (I\pi)v_1 + (1-\cos\pi)[\omega_1]v_1 + (\pi-\sin\pi)[\omega_1]^2v_1$$
-    $$p_1(\pi) = \pi \begin{pmatrix}0\\0\\1/\pi\end{pmatrix} + 2 \begin{pmatrix}0\\0\\0\end{pmatrix} + \pi \begin{pmatrix}0\\0\\0\end{pmatrix} = \begin{pmatrix}0\\0\\1\end{pmatrix}$$
+    $$p_1(\pi) = \pi \begin{pmatrix}0\\\\0\\\\1/\pi\end{pmatrix} + 2 \begin{pmatrix}0\\\\0\\\\0\end{pmatrix} + \pi \begin{pmatrix}0\\\\0\\\\0\end{pmatrix} = \begin{pmatrix}0\\\\0\\\\1\end{pmatrix}$$
 
     **组合矩阵 T₁**:
-    $$T_1 = \begin{pmatrix} -1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & 1 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T_1 = \begin{pmatrix} -1 & 0 & 0 & 0 \\\\ 0 & -1 & 0 & 0 \\\\ 0 & 0 & 1 & 1 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
-    > 💡 **提示**: 对于关节1这种纯螺旋运动（即线性速度向量 `v` 与旋转轴 `ω` 平行），平移公式会直接简化为 `p(θ) = vθ`。不仅如此，当旋转轴是坐标轴时（如本例中的 `ω₁`），通用的罗德里格斯公式也会直接简化为您所熟知的基本旋转矩阵 `Rot(z, θ)`。
+    > 💡 **提示**: 对于关节1这种纯螺旋运动（即线性速度向量 `v` 与旋转轴 `ω` 平行），平移公式会直接简化为 `p(θ) = vθ`。不仅如此，当旋转轴是坐标轴时（如本例中的 `ω₁`），通用的罗德里格斯公式也会直接简化为大家所熟知的基本旋转矩阵 `Rot(z, θ)`。
 
 * **关节 2 ($\theta_2=\pi/2$)**:
 
     **旋转部分 R₂:**
-    $R_2(\pi/2) = \text{Rot}(y, \pi/2) = \begin{pmatrix}0 & 0 & 1 \\ 0 & 1 & 0 \\ -1 & 0 & 0\end{pmatrix}$。
+    $$R_2(\pi/2) = \text{Rot}(y, \pi/2) = \begin{pmatrix}0 & 0 & 1 \\\\ 0 & 1 & 0 \\\\ -1 & 0 & 0\end{pmatrix}$$
 
     **平移部分 p₂:**
     已知 $\omega_2=(0,1,0)^T, v_2=(-10,0,0)^T, \theta_2=\pi/2$。
-    $[\omega_2]v_2 = \begin{pmatrix}0\\0\\10\end{pmatrix}$，$[\omega_2]^2v_2 = \begin{pmatrix}10\\0\\0\end{pmatrix}$。
+    $[\omega_2]v_2 = \begin{pmatrix}0\\\\0\\\\10\end{pmatrix}$，$[\omega_2]^2v_2 = \begin{pmatrix}10\\\\0\\\\0\end{pmatrix}$。
     $$p_2(\pi/2) = (I\frac{\pi}{2})v_2 + (1-\cos\frac{\pi}{2})[\omega_2]v_2 + (\frac{\pi}{2}-\sin\frac{\pi}{2})[\omega_2]^2v_2$$
-    $$p_2(\pi/2) = \frac{\pi}{2}\begin{pmatrix}-10\\0\\0\end{pmatrix} + 1\begin{pmatrix}0\\0\\10\end{pmatrix} + (\frac{\pi}{2}-1)\begin{pmatrix}10\\0\\0\end{pmatrix}$$
-    $$p_2(\pi/2) = \begin{pmatrix}-5\pi\\0\\0\end{pmatrix} + \begin{pmatrix}0\\0\\10\end{pmatrix} + \begin{pmatrix}5\pi-10\\0\\0\end{pmatrix} = \begin{pmatrix}-10\\0\\10\end{pmatrix}$$
+    $$p_2(\pi/2) = \frac{\pi}{2}\begin{pmatrix}-10\\\\0\\\\0\end{pmatrix} + 1\begin{pmatrix}0\\\\0\\\\10\end{pmatrix} + (\frac{\pi}{2}-1)\begin{pmatrix}10\\\\0\\\\0\end{pmatrix}$$
+    $$p_2(\pi/2) = \begin{pmatrix}-5\pi\\\\0\\\\0\end{pmatrix} + \begin{pmatrix}0\\\\0\\\\10\end{pmatrix} + \begin{pmatrix}5\pi-10\\\\0\\\\0\end{pmatrix} = \begin{pmatrix}-10\\\\0\\\\10\end{pmatrix}$$
 
     **组合矩阵 T₂**:
-    $$T_2 = \begin{pmatrix} 0 & 0 & 1 & -10 \\ 0 & 1 & 0 & 0 \\ -1 & 0 & 0 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T_2 = \begin{pmatrix} 0 & 0 & 1 & -10 \\\\ 0 & 1 & 0 & 0 \\\\ -1 & 0 & 0 & 10 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 * **关节 3 ($\theta_3=-\pi$)**:
 
     **旋转部分 R₃:**
-    $R_3(-\pi) = \text{Rot}(x, -\pi) = \begin{pmatrix}1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & -1\end{pmatrix}$。
+    $$R_3(-\pi) = \text{Rot}(x, -\pi) = \begin{pmatrix}1 & 0 & 0 \\\\ 0 & -1 & 0 \\\\ 0 & 0 & -1\end{pmatrix}$$
 
     **平移部分 p₃:**
     已知 $\omega_3=(1,0,0)^T, v_3=(0,5,-5)^T, \theta_3=-\pi$。
-    $[\omega_3]v_3 = \begin{pmatrix}0\\5\\5\end{pmatrix}$，$[\omega_3]^2v_3 = \begin{pmatrix}0\\-5\\5\end{pmatrix}$。
+    $[\omega_3]v_3 = \begin{pmatrix}0\\\\5\\\\5\end{pmatrix}$，$[\omega_3]^2v_3 = \begin{pmatrix}0\\\\-5\\\\5\end{pmatrix}$。
     $$p_3(-\pi) = (I(-\pi))v_3 + (1-\cos(-\pi))[\omega_3]v_3 + (-\pi-\sin(-\pi))[\omega_3]^2v_3$$
-    $$p_3(-\pi) = (-\pi)\begin{pmatrix}0\\5\\-5\end{pmatrix} + 2\begin{pmatrix}0\\5\\5\end{pmatrix} + (-\pi)\begin{pmatrix}0\\-5\\5\end{pmatrix}$$
-    $$p_3(-\pi) = \begin{pmatrix}0\\-5\pi\\5\pi\end{pmatrix} + \begin{pmatrix}0\\10\\10\end{pmatrix} + \begin{pmatrix}0\\5\pi\\-5\pi\end{pmatrix} = \begin{pmatrix}0\\10\\10\end{pmatrix}$$
+    $$p_3(-\pi) = (-\pi)\begin{pmatrix}0\\\\5\\\\-5\end{pmatrix} + 2\begin{pmatrix}0\\\\5\\\\5\end{pmatrix} + (-\pi)\begin{pmatrix}0\\\\-5\\\\5\end{pmatrix}$$
+    $$p_3(-\pi) = \begin{pmatrix}0\\\\-5\pi\\\\5\pi\end{pmatrix} + \begin{pmatrix}0\\\\10\\\\10\end{pmatrix} + \begin{pmatrix}0\\\\5\pi\\\\-5\pi\end{pmatrix} = \begin{pmatrix}0\\\\10\\\\10\end{pmatrix}$$
 
     **组合矩阵 T₃**:
-    $$T_3 = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & -1 & 0 & 10 \\ 0 & 0 & -1 & 10 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T_3 = \begin{pmatrix} 1 & 0 & 0 & 0 \\\\ 0 & -1 & 0 & 10 \\\\ 0 & 0 & -1 & 10 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 #### 步骤 4: 末端位姿 `T_sb(4)`
 
 将所有矩阵按公式 $T_{sb}(4) = T_1 \cdot T_2 \cdot T_3 \cdot M$ 连乘。
 
 * **第一步: $T_{12} = T_1 \cdot T_2$**
-    $$T_{12} = \begin{pmatrix} 0 & 0 & -1 & 10 \\ 0 & -1 & 0 & 0 \\ -1 & 0 & 0 & 11 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T_{12} = \begin{pmatrix} 0 & 0 & -1 & 10 \\\\ 0 & -1 & 0 & 0 \\\\ -1 & 0 & 0 & 11 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 * **第二步: $T_{123} = T_{12} \cdot T_3$**
-    $$T_{123} = \begin{pmatrix} 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & -10 \\ -1 & 0 & 0 & 11 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T_{123} = \begin{pmatrix} 0 & 0 & 1 & 0 \\\\ 0 & 1 & 0 & -10 \\\\ -1 & 0 & 0 & 11 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 * **第三步: $T_{sb}(4) = T_{123} \cdot M$**
-    $$T_{sb}(4) = \begin{pmatrix} 0 & 0 & 1 & 0 \\ 0 & 1 & 0 & -10 \\ -1 & 0 & 0 & 11 \\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} 0 & -1 & 0 & 0 \\ 1 & 0 & 0 & 8 \\ 0 & 0 & 1 & 5 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
+    $$T_{sb}(4) = \begin{pmatrix} 0 & 0 & 1 & 0 \\\\ 0 & 1 & 0 & -10 \\\\ -1 & 0 & 0 & 11 \\\\ 0 & 0 & 0 & 1 \end{pmatrix} \begin{pmatrix} 0 & -1 & 0 & 0 \\\\ 1 & 0 & 0 & 8 \\\\ 0 & 0 & 1 & 5 \\\\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 
 连乘得到最终结果：
 $$
 T_{sb}(4) = \begin{pmatrix}
-0 & 0 & 1 & 5 \\
-1 & 0 & 0 & -2 \\
-0 & 1 & 0 & 11 \\
+0 & 0 & 1 & 5 \\\\
+1 & 0 & 0 & -2 \\\\
+0 & 1 & 0 & 11 \\\\
 0 & 0 & 0 & 1
 \end{pmatrix}
 $$
