@@ -11,7 +11,7 @@ head_scripts:
     defer: false
 ---
 
-在上一篇[《掌握现代机器人学：基于旋量理论的正运动学》](/posts/2025-10-08-robot-kinematics-with-screw-theory.md/)教程中，我们详细探讨了指数映射 $e^{[\mathcal{S}]\theta}$ 的理论和计算方法。它是将一个螺旋轴 $S$ 和关节变量 $\theta$ 转换为一个 $SE(3)$ 空间下4x4齐次变换矩阵的关键工具。
+在上一篇[《掌握现代机器人学：基于旋量理论的正运动学》](/posts/robot-kinematics-with-screw-theory/)教程中，我们详细探讨了指数映射 $e^{[\mathcal{S}]\theta}$ 的理论和计算方法。它是将一个螺旋轴 $S$ 和关节变量 $\theta$ 转换为一个 $SE(3)$ 空间下4x4齐次变换矩阵的关键工具。
 
 为了方便学习和验证计算，本页提供一个基于 JavaScript 的在线计算器。您只需输入6维螺旋轴 $S=(\omega, v)$ 和关节变量 $\theta$，即可实时计算出对应的变换矩阵。
 
