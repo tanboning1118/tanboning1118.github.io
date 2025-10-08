@@ -60,7 +60,8 @@ $$T(\theta) = e^{[\mathcal{S}]\theta} = \begin{pmatrix} R(\theta) & p(\theta) \\
 * **平移部分:**
     $$p(\theta) = \left( I\theta + (1-\cos(\theta))[\omega] + (\theta - \sin(\theta))[\omega]^2 \right) v$$
 
-    * $[\omega]$ 是 $\omega$ 向量的3x3反对称矩阵: [\omega] = \begin{pmatrix} 0 & -\omega_z & \omega_y \\ \omega_z & 0 & -\omega_x \\ -\omega_y & \omega_x & 0 \end{pmatrix}
+* $[\omega]$ 是 $\omega$ 向量的3x3反对称矩阵:
+    $$[\omega] = \begin{pmatrix} 0 & -\omega_z & \omega_y \\ \omega_z & 0 & -\omega_x \\ -\omega_y & \omega_x & 0 \end{pmatrix}$$
 
 ### 3. 核心公式：指数积 (Product of Exponentials, PoE)
 
