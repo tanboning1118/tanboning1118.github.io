@@ -1,6 +1,7 @@
 ---
 title: "打造即插即用的Ubuntu移动工作站：外置硬盘安装终极指南"
 date: 2025-10-05 23:30:00 +0800
+category: Linux系统
 tags: [Ubuntu, Windows, 移动工作站, Hyper-V, 硬盘分区, UEFI, MBR]
 ---
 
