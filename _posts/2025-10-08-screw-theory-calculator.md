@@ -7,7 +7,8 @@ author: Bathelor
 toc: false
 math: true
 head_scripts:
-  - https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.3.0/math.js
+  - src: https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.3.0/math.js
+    defer: false
 ---
 
 在上一篇[《掌握现代机器人学：基于旋量理论的正运动学》](/posts/robot-kinematics-with-screw-theory/)教程中，我们详细探讨了指数映射 $e^{[\mathcal{S}]\theta}$ 的理论和计算方法。它是将一个螺旋轴 $S$ 和关节变量 $\theta$ 转换为一个 $SE(3)$ 空间下4x4齐次变换矩阵的关键工具。
@@ -52,32 +53,22 @@ head_scripts:
 </div>
 
 <script>
-  // 等待整个页面的HTML都加载完毕后再执行脚本
   document.addEventListener('DOMContentLoaded', function() {
-    console.log("【调试】: 页面DOM加载完成，脚本开始执行。");
-
+  
     const calculateBtn = document.getElementById('calculate-btn');
     const resultMatrixEl = document.getElementById('result-matrix');
 
     if (!calculateBtn || !resultMatrixEl) {
-      console.error("【调试】: 致命错误！计算器核心HTML元素未找到。");
+      console.error("计算器核心HTML元素未找到，请检查ID是否正确。");
       return;
     }
-    console.log("【调试】: 计算按钮和结果区域已成功找到。");
 
-    // 绑定点击事件
     calculateBtn.addEventListener('click', function() {
-      console.log("【调试】: 计算按钮被点击。");
-
-      // 检查math.js库是否已加载
       if (typeof math === 'undefined') {
-        console.error("【调试】: 错误！math.js 在点击时仍未定义。");
         resultMatrixEl.innerText = "错误：Math.js 数学库加载失败。\n请检查网络连接或 head_scripts 配置。";
         return;
       }
-      console.log("【调试】: math.js 已定义，开始获取输入。");
 
-      // 1. 获取所有输入值
       const w_x = parseFloat(document.getElementById('w_x').value);
       const w_y = parseFloat(document.getElementById('w_y').value);
       const w_z = parseFloat(document.getElementById('w_z').value);
@@ -86,27 +77,30 @@ head_scripts:
       const v_z = parseFloat(document.getElementById('v_z').value);
       let theta = parseFloat(document.getElementById('theta').value);
       const unit = document.querySelector('input[name="angle_unit"]:checked').value;
-      
-      console.log("【调试】: 输入值已获取: ", {w_x, w_y, w_z, v_x, v_y, v_z, theta, unit});
 
       if (isNaN(w_x) || isNaN(w_y) || isNaN(w_z) || isNaN(v_x) || isNaN(v_y) || isNaN(v_z) || isNaN(theta)) {
-          console.error("【调试】: 错误！输入值包含非数字。");
           resultMatrixEl.innerText = "错误：所有输入都必须是有效的数字。";
           return;
       }
 
-      // 2. 角度制转换为弧度制
       if (unit === 'deg') {
           theta = theta * Math.PI / 180;
-          console.log("【调试】: 角度已转换为弧度: ", theta);
       }
 
-      // 3. 创建向量和矩阵
       const w = [w_x, w_y, w_z];
       const v = [v_x, v_y, v_z];
       
-      console.log("【调试】: 开始计算 R 和 p...");
-      // ...后续计算代码...
+      if (math.deepEqual(w, [0, 0, 0])) {
+          const T = math.matrix([
+              [1, 0, 0, v_x * theta],
+              [0, 1, 0, v_y * theta],
+              [0, 0, 1, v_z * theta],
+              [0, 0, 0, 1]
+          ]);
+          displayMatrix(T);
+          return;
+      }
+
       const I = math.identity(3);
       const w_skew = math.matrix([[0, -w_z, w_y], [w_z, 0, -w_x], [-w_y, w_x, 0]]);
       const w_skew_sq = math.multiply(w_skew, w_skew);
@@ -114,14 +108,12 @@ head_scripts:
       const term_sin = math.multiply(w_skew, Math.sin(theta));
       const term_cos = math.multiply(w_skew_sq, (1 - Math.cos(theta)));
       const R = math.add(I, term_sin, term_cos);
-      console.log("【调试】: 旋转矩阵 R 计算完成。");
 
       const term1_p = math.multiply(I, theta);
       const term2_p = math.multiply(w_skew, (1 - Math.cos(theta)));
       const term3_p = math.multiply(w_skew_sq, (theta - Math.sin(theta)));
       const p_factor_matrix = math.add(term1_p, term2_p, term3_p);
       const p = math.multiply(p_factor_matrix, v);
-      console.log("【调试】: 平移向量 p 计算完成。");
 
       const T = math.matrix([
           [R.get([0, 0]), R.get([0, 1]), R.get([0, 2]), p.get([0])],
@@ -130,7 +122,6 @@ head_scripts:
           [0, 0, 0, 1]
       ]);
       
-      console.log("【调试】: 准备显示最终矩阵。");
       displayMatrix(T);
     });
 
@@ -147,11 +138,15 @@ head_scripts:
           }
       }
       resultMatrixEl.innerText = matrixString;
-      console.log("【调试】: 矩阵已更新到页面。");
     }
     
-    // 移除自动加载功能，仅依赖手动点击，以简化调试
-    resultMatrixEl.innerText = "请点击上方按钮进行计算。";
+    setTimeout(() => {
+        if (typeof math !== 'undefined') {
+            calculateBtn.click();
+        } else {
+            resultMatrixEl.innerText = "正在等待 Math.js 加载... 或加载失败。\n如果长时间无响应，请检查网络并强制刷新页面。";
+        }
+    }, 200);
 
   });
 </script>
