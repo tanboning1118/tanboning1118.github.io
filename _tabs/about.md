@@ -4,5 +4,8 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-> Add Markdown syntax content to file `_tabs/about.md`{: .filepath } and it will show up on this page.
-{: .prompt-tip }
+To the person building this:
+
+Don't forget what this space represents. It's a monument to your curiosity and proof that you chose to create instead of just consume.
+
+The challenges will be great, but your resolve is greater. Look back at these pages on tough days and remember: you are capable, you are learning, and you are becoming the person you set out to be.
