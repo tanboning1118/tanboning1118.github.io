@@ -6,9 +6,6 @@ tags: [旋量理论, 计算器, 工具, 指数映射, SE(3)]
 author: Bathelor
 toc: false
 math: true
-head_scripts:
-  - src: https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.3.0/math.js
-    defer: false
 ---
 
 在上一篇[《掌握现代机器人学：基于旋量理论的正运动学》](/posts/robot-kinematics-with-screw-theory/)教程中，我们详细探讨了指数映射 $e^{[\mathcal{S}]\theta}$ 的理论和计算方法。它是将一个螺旋轴 $S$ 和关节变量 $\theta$ 转换为一个 $SE(3)$ 空间下4x4齐次变换矩阵的关键工具。
@@ -52,6 +49,8 @@ head_scripts:
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.3.0/math.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
   
@@ -59,13 +58,14 @@ head_scripts:
     const resultMatrixEl = document.getElementById('result-matrix');
 
     if (!calculateBtn || !resultMatrixEl) {
-      console.error("计算器核心HTML元素未找到，请检查ID是否正确。");
+      console.error("计算器核心HTML元素未找到。");
       return;
     }
 
-    calculateBtn.addEventListener('click', function() {
+    // 主计算函数
+    function performCalculation() {
       if (typeof math === 'undefined') {
-        resultMatrixEl.innerText = "错误：Math.js 数学库加载失败。\n请检查网络连接或 head_scripts 配置。";
+        resultMatrixEl.innerText = "错误：Math.js 数学库加载失败。";
         return;
       }
 
@@ -105,16 +105,10 @@ head_scripts:
       const w_skew = math.matrix([[0, -w_z, w_y], [w_z, 0, -w_x], [-w_y, w_x, 0]]);
       const w_skew_sq = math.multiply(w_skew, w_skew);
 
-      const term_sin = math.multiply(w_skew, Math.sin(theta));
-      const term_cos = math.multiply(w_skew_sq, (1 - Math.cos(theta)));
-      const R = math.add(I, term_sin, term_cos);
-
-      const term1_p = math.multiply(I, theta);
-      const term2_p = math.multiply(w_skew, (1 - Math.cos(theta)));
-      const term3_p = math.multiply(w_skew_sq, (theta - Math.sin(theta)));
-      const p_factor_matrix = math.add(term1_p, term2_p, term3_p);
+      const R = math.add(I, math.multiply(w_skew, Math.sin(theta)), math.multiply(w_skew_sq, (1 - Math.cos(theta))));
+      const p_factor_matrix = math.add(math.multiply(I, theta), math.multiply(w_skew, (1 - Math.cos(theta))), math.multiply(w_skew_sq, (theta - Math.sin(theta))));
       const p = math.multiply(p_factor_matrix, v);
-
+      
       const T = math.matrix([
           [R.get([0, 0]), R.get([0, 1]), R.get([0, 2]), p.get([0])],
           [R.get([1, 0]), R.get([1, 1]), R.get([1, 2]), p.get([1])],
@@ -123,8 +117,9 @@ head_scripts:
       ]);
       
       displayMatrix(T);
-    });
+    }
 
+    // 格式化并显示矩阵的辅助函数
     function displayMatrix(matrix) {
       let matrixString = "";
       for (let i = 0; i < 4; i++) {
@@ -139,14 +134,11 @@ head_scripts:
       }
       resultMatrixEl.innerText = matrixString;
     }
-    
-    setTimeout(() => {
-        if (typeof math !== 'undefined') {
-            calculateBtn.click();
-        } else {
-            resultMatrixEl.innerText = "正在等待 Math.js 加载... 或加载失败。\n如果长时间无响应，请检查网络并强制刷新页面。";
-        }
-    }, 200);
 
+    // 绑定按钮的点击事件
+    calculateBtn.addEventListener('click', performCalculation);
+    
+    // 页面加载后，进行一次初始计算
+    performCalculation();
   });
 </script>
