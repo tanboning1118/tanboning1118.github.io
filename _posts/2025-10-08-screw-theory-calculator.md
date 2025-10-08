@@ -52,99 +52,112 @@ head_scripts:
 </div>
 
 <script>
-  document.getElementById('calculate-btn').addEventListener('click', function() {
-    // 1. 获取所有输入值
-    const w_x = parseFloat(document.getElementById('w_x').value);
-    const w_y = parseFloat(document.getElementById('w_y').value);
-    const w_z = parseFloat(document.getElementById('w_z').value);
-    const v_x = parseFloat(document.getElementById('v_x').value);
-    const v_y = parseFloat(document.getElementById('v_y').value);
-    const v_z = parseFloat(document.getElementById('v_z').value);
-    let theta = parseFloat(document.getElementById('theta').value);
-    const unit = document.querySelector('input[name="angle_unit"]:checked').value;
-
-    // 检查输入是否有效
-    if (isNaN(w_x) || isNaN(w_y) || isNaN(w_z) || isNaN(v_x) || isNaN(v_y) || isNaN(v_z) || isNaN(theta)) {
-        document.getElementById('result-matrix').innerText = "错误：所有输入都必须是数字。";
-        return;
-    }
-
-    // 2. 如果是角度制，转换为弧度制
-    if (unit === 'deg') {
-        theta = theta * Math.PI / 180;
-    }
-
-    // 3. 使用 Math.js 创建向量和矩阵
-    const w = [w_x, w_y, w_z];
-    const v = [v_x, v_y, v_z];
-    
-    // 如果w是零向量（纯平移），直接计算
-    if (w_x === 0 && w_y === 0 && w_z === 0) {
-        const T = math.matrix([
-            [1, 0, 0, v_x * theta],
-            [0, 1, 0, v_y * theta],
-            [0, 0, 1, v_z * theta],
-            [0, 0, 0, 1]
-        ]);
-        displayMatrix(T);
-        return;
-    }
-
-    const I = math.identity(3);
-    const w_skew = math.matrix([
-        [0, -w_z, w_y],
-        [w_z, 0, -w_x],
-        [-w_y, w_x, 0]
-    ]);
-    const w_skew_sq = math.multiply(w_skew, w_skew);
-
-    // 4. 计算旋转部分 R (Rodrigues' 公式)
-    const term_sin = math.multiply(w_skew, Math.sin(theta));
-    const term_cos = math.multiply(w_skew_sq, (1 - Math.cos(theta)));
-    const R = math.add(I, term_sin, term_cos);
-
-    // 5. 计算平移部分 p
-    const term1_p = math.multiply(I, theta);
-    const term2_p = math.multiply(w_skew, (1 - Math.cos(theta)));
-    const term3_p = math.multiply(w_skew_sq, (theta - Math.sin(theta)));
-    const p_factor_matrix = math.add(term1_p, term2_p, term3_p);
-    const p = math.multiply(p_factor_matrix, v);
-
-    // 6. 组合成最终的 4x4 矩阵 T
-    const T = math.matrix([
-        [R.get([0, 0]), R.get([0, 1]), R.get([0, 2]), p.get([0])],
-        [R.get([1, 0]), R.get([1, 1]), R.get([1, 2]), p.get([1])],
-        [R.get([2, 0]), R.get([2, 1]), R.get([2, 2]), p.get([2])],
-        [0, 0, 0, 1]
-    ]);
-    
-    // 7. 显示结果
-    displayMatrix(T);
-  });
-
-  // 辅助函数，用于格式化并显示矩阵
-  function displayMatrix(matrix) {
-    let matrixString = "";
-    for (let i = 0; i < 4; i++) {
-        let row = [];
-        for (let j = 0; j < 4; j++) {
-            row.push(matrix.get([i, j]).toFixed(4).padStart(9, ' '));
-        }
-        matrixString += row.join("  ");
-        if (i < 3) {
-            matrixString += "\n";
-        }
-    }
-    document.getElementById('result-matrix').innerText = matrixString;
-  }
-  
-  // 页面加载后，默认计算一次示例值
+  // 等待整个页面的HTML都加载完毕后再执行脚本
   document.addEventListener('DOMContentLoaded', function() {
-      // 延迟一小段时间确保math.js加载完成
-      setTimeout(() => {
+  
+    const calculateBtn = document.getElementById('calculate-btn');
+    const resultMatrixEl = document.getElementById('result-matrix');
+
+    // 检查核心元素是否存在
+    if (!calculateBtn || !resultMatrixEl) {
+      console.error("计算器核心HTML元素未找到，请检查ID是否正确。");
+      return;
+    }
+
+    // 绑定点击事件
+    calculateBtn.addEventListener('click', function() {
+      // 检查math.js库是否已加载
+      if (typeof math === 'undefined') {
+        resultMatrixEl.innerText = "错误：Math.js 数学库加载失败。\n请检查网络连接或 head_scripts 配置。";
+        return;
+      }
+
+      // 1. 获取所有输入值
+      const w_x = parseFloat(document.getElementById('w_x').value);
+      const w_y = parseFloat(document.getElementById('w_y').value);
+      const w_z = parseFloat(document.getElementById('w_z').value);
+      const v_x = parseFloat(document.getElementById('v_x').value);
+      const v_y = parseFloat(document.getElementById('v_y').value);
+      const v_z = parseFloat(document.getElementById('v_z').value);
+      let theta = parseFloat(document.getElementById('theta').value);
+      const unit = document.querySelector('input[name="angle_unit"]:checked').value;
+
+      if (isNaN(w_x) || isNaN(w_y) || isNaN(w_z) || isNaN(v_x) || isNaN(v_y) || isNaN(v_z) || isNaN(theta)) {
+          resultMatrixEl.innerText = "错误：所有输入都必须是有效的数字。";
+          return;
+      }
+
+      // 2. 角度制转换为弧度制
+      if (unit === 'deg') {
+          theta = theta * Math.PI / 180;
+      }
+
+      // 3. 创建向量和矩阵
+      const w = [w_x, w_y, w_z];
+      const v = [v_x, v_y, v_z];
+      
+      if (math.deepEqual(w, [0, 0, 0])) { // 纯平移的特殊情况
+          const T = math.matrix([
+              [1, 0, 0, v_x * theta],
+              [0, 1, 0, v_y * theta],
+              [0, 0, 1, v_z * theta],
+              [0, 0, 0, 1]
+          ]);
+          displayMatrix(T);
+          return;
+      }
+
+      const I = math.identity(3);
+      const w_skew = math.matrix([[0, -w_z, w_y], [w_z, 0, -w_x], [-w_y, w_x, 0]]);
+      const w_skew_sq = math.multiply(w_skew, w_skew);
+
+      // 4. 计算旋转部分 R (Rodrigues' 公式)
+      const term_sin = math.multiply(w_skew, Math.sin(theta));
+      const term_cos = math.multiply(w_skew_sq, (1 - Math.cos(theta)));
+      const R = math.add(I, term_sin, term_cos);
+
+      // 5. 计算平移部分 p
+      const term1_p = math.multiply(I, theta);
+      const term2_p = math.multiply(w_skew, (1 - Math.cos(theta)));
+      const term3_p = math.multiply(w_skew_sq, (theta - Math.sin(theta)));
+      const p_factor_matrix = math.add(term1_p, term2_p, term3_p);
+      const p = math.multiply(p_factor_matrix, v);
+
+      // 6. 组合成最终的 4x4 矩阵 T
+      const T = math.matrix([
+          [R.get([0, 0]), R.get([0, 1]), R.get([0, 2]), p.get([0])],
+          [R.get([1, 0]), R.get([1, 1]), R.get([1, 2]), p.get([1])],
+          [R.get([2, 0]), R.get([2, 1]), R.get([2, 2]), p.get([2])],
+          [0, 0, 0, 1]
+      ]);
+      
+      displayMatrix(T);
+    });
+
+    // 辅助函数，用于格式化并显示矩阵
+    function displayMatrix(matrix) {
+      let matrixString = "";
+      for (let i = 0; i < 4; i++) {
+          let row = [];
+          for (let j = 0; j < 4; j++) {
+              row.push(matrix.get([i, j]).toFixed(4).padStart(9, ' '));
+          }
+          matrixString += row.join("  ");
+          if (i < 3) {
+              matrixString += "\n";
+          }
+      }
+      resultMatrixEl.innerText = matrixString;
+    }
+    
+    // 尝试在页面加载后进行一次初始计算
+    setTimeout(() => {
         if (typeof math !== 'undefined') {
-          document.getElementById('calculate-btn').click();
+            calculateBtn.click();
+        } else {
+            resultMatrixEl.innerText = "正在等待 Math.js 加载... 或加载失败。\n请检查网络连接或 head_scripts 配置。";
         }
-      }, 100);
+    }, 200);
+
   });
 </script>
