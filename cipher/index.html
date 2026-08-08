@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#f4f6f8">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' blob: data:; script-src 'self'; style-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'"
+    >
+    <title>Cipher GIF</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="app-bar">
+      <a class="site-link" href="/">Tanboning</a>
+      <div class="product-name">
+        <strong>Cipher GIF</strong>
+        <span>核心版</span>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <nav class="mode-tabs" aria-label="工作模式">
+        <button class="mode-tab is-active" type="button" data-mode="send" aria-selected="true">发送</button>
+        <button class="mode-tab" type="button" data-mode="receive" aria-selected="false">接收</button>
+      </nav>
+
+      <section class="workspace" id="send-view" aria-labelledby="send-title">
+        <form class="control-pane" id="send-form">
+          <input type="text" name="username" value="cipher-gif" autocomplete="username" hidden>
+          <div class="pane-heading">
+            <p class="step-label">发送</p>
+            <h1 id="send-title">生成加密 GIF</h1>
+          </div>
+
+          <fieldset class="field-group">
+            <legend>内容类型</legend>
+            <div class="segmented-control">
+              <label>
+                <input type="radio" name="content-kind" value="text" checked>
+                <span>文字</span>
+              </label>
+              <label>
+                <input type="radio" name="content-kind" value="file">
+                <span>文件</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="field-group" id="text-field">
+            <label for="secret-text">加密内容</label>
+            <textarea id="secret-text" rows="8" placeholder="输入要发送的信息" required></textarea>
+            <div class="field-meta"><span id="text-size">0 B</span><span>上限 1 MB</span></div>
+          </div>
+
+          <div class="field-group" id="file-field" hidden>
+            <label for="secret-file">选择文件</label>
+            <label class="drop-control" id="secret-file-drop" for="secret-file">
+              <input id="secret-file" type="file">
+              <strong id="secret-file-name">选择不超过 1 MB 的文件</strong>
+              <span id="secret-file-size">尚未选择</span>
+            </label>
+          </div>
+
+          <div class="field-group">
+            <label for="carrier-file">铭刻载体图片</label>
+            <label class="drop-control" id="carrier-file-drop" for="carrier-file">
+              <input id="carrier-file" type="file" accept="image/*" required>
+              <strong id="carrier-file-name">选择一张载体图片</strong>
+              <span id="carrier-file-size">图片会保留在 GIF 每个动画帧中</span>
+            </label>
+          </div>
+
+          <div class="field-group">
+            <label for="send-password">加密密码</label>
+            <div class="password-row">
+              <input id="send-password" type="password" minlength="8" autocomplete="new-password" required>
+              <button class="secondary-button" id="generate-password" type="button">生成</button>
+            </div>
+            <label class="check-control">
+              <input id="show-send-password" type="checkbox">
+              <span>显示密码</span>
+            </label>
+          </div>
+
+          <button class="primary-button" id="encrypt-button" type="submit">生成加密 GIF</button>
+          <div class="operation-status" id="send-status" role="status" aria-live="polite" hidden>
+            <div class="progress-track"><span id="send-progress"></span></div>
+            <p id="send-status-text"></p>
+          </div>
+        </form>
+
+        <section class="output-pane" aria-label="加密输出">
+          <div class="preview-stage empty" id="send-preview-stage">
+            <img id="send-preview" alt="生成的加密 GIF" hidden>
+            <span id="send-placeholder">等待生成</span>
+          </div>
+          <div class="output-details" id="send-result" hidden>
+            <dl>
+              <div><dt>GIF 大小</dt><dd id="gif-size"></dd></div>
+              <div><dt>动画帧</dt><dd id="gif-frames"></dd></div>
+              <div><dt>消息 ID</dt><dd id="gif-message-id"></dd></div>
+            </dl>
+            <div class="output-actions">
+              <a class="primary-button" id="download-gif" download>下载 GIF</a>
+              <button class="secondary-button" id="save-gif" type="button">保存 / 分享</button>
+              <button class="secondary-button" id="try-decrypt" type="button">转到解密</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="workspace" id="receive-view" aria-labelledby="receive-title" hidden>
+        <form class="control-pane" id="receive-form">
+          <input type="text" name="username" value="cipher-gif" autocomplete="username" hidden>
+          <div class="pane-heading">
+            <p class="step-label">接收</p>
+            <h1 id="receive-title">解密 Cipher GIF</h1>
+          </div>
+
+          <div class="field-group">
+            <label for="cipher-file">加密 GIF</label>
+            <label class="drop-control" id="cipher-file-drop" for="cipher-file">
+              <input id="cipher-file" type="file" accept="image/gif,.gif">
+              <strong id="cipher-file-name">选择 Cipher GIF</strong>
+              <span id="cipher-file-size">尚未选择</span>
+            </label>
+          </div>
+
+          <div class="field-group">
+            <label for="receive-password">解密密码</label>
+            <input id="receive-password" type="password" autocomplete="current-password" required>
+            <label class="check-control">
+              <input id="show-receive-password" type="checkbox">
+              <span>显示密码</span>
+            </label>
+          </div>
+
+          <button class="primary-button" id="decrypt-button" type="submit">解密并验证</button>
+          <div class="operation-status" id="receive-status" role="status" aria-live="polite" hidden>
+            <div class="progress-track"><span id="receive-progress"></span></div>
+            <p id="receive-status-text"></p>
+          </div>
+        </form>
+
+        <section class="output-pane" aria-label="解密结果">
+          <div class="preview-stage empty" id="receive-preview-stage">
+            <img id="receive-preview" alt="待解密的 Cipher GIF" hidden>
+            <span id="receive-placeholder">等待导入</span>
+          </div>
+          <div class="decoded-result" id="decoded-result" hidden>
+            <div class="verified-line"><span></span><strong>验证通过</strong></div>
+            <pre id="decoded-text" hidden></pre>
+            <div class="file-result" id="decoded-file" hidden>
+              <strong id="decoded-file-name"></strong>
+              <span id="decoded-file-meta"></span>
+            </div>
+            <div class="output-actions">
+              <button class="secondary-button" id="copy-text" type="button" hidden>复制文字</button>
+              <a class="primary-button" id="download-file" download hidden>下载文件</a>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>Cipher GIF Protocol v2</span>
+      <span>浏览器本地处理</span>
+    </footer>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
