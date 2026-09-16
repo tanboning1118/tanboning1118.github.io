@@ -4,8 +4,20 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-To the person building this:
+# Boning Tan
 
-Don't forget what this space represents. It's a monument to your curiosity and proof that you chose to create instead of just consume.
+I am a master's student at **Tongji University**, affiliated with the **School of Mechanical Engineering**.
 
-The challenges will be great, but your resolve is greater. Look back at these pages on tough days and remember: you are capable, you are learning, and you are becoming the person you set out to be.
+My research interests include:
+
+- Robotics
+- Robot learning and robotic manipulation
+- Vision-language-action models
+- Imitation learning and embodied artificial intelligence
+
+I began working in robotics in 2024 and currently focus on learning-based methods for intelligent robotic systems.
+
+## Contact
+
+- Email: [tanponing@gmail.com](mailto:tanponing@gmail.com)
+- GitHub: [tanboning1118](https://github.com/tanboning1118)

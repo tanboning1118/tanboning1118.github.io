@@ -14,12 +14,13 @@ timezone: Asia/Shanghai
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Bathelor # the main title
+title: Boning Tan # the main title
 
-tagline: This is the home of an undiscovered genius. # it will display as the subtitle
+tagline: Robotics and Embodied AI # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  This is a space that records bathelor's learning and life.
+  Personal website of Boning Tan, a master's student at Tongji University
+  interested in robotics, robot learning, and vision-language-action models.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
@@ -34,11 +35,10 @@ twitter:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: bathelor
+  name: Boning Tan
   email: tanponing@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your Twitter homepage
     - https://github.com/tanboning1118 # change to your GitHub homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
