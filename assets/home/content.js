@@ -12,7 +12,15 @@ window.PROFILE = {
       {file:'exoskeleton-pcb.png',en:'Power distribution and emergency-stop PCB design',zh:'分线板与急停开关板 PCB 设计'}
     ],
     dex: [{file:'dexhand-grasp.png',en:'Dexterous hand grasping a drone model',zh:'灵巧手抓取无人机模型'}],
-    arm: [{file:'robot-arm-cad.png',en:'IRB2600 robot arm · SolidWorks model',zh:'IRB2600 机械臂 · SolidWorks 建模'}, {file:'trajectory-result.png',en:'Trajectory extraction and fitting result',zh:'轨迹提取与拟合结果'}],
+    arm: [
+      {file:'robot-arm-cad.png',en:'IRB2600 robot arm · SolidWorks model',zh:'IRB2600 机械臂 · SolidWorks 建模'},
+      {video:'arm-simulink.mp4',en:'Simscape simulation: the arm tracking its target trajectory',zh:'Simscape 仿真：机械臂跟踪目标轨迹'},
+      {file:'arm-tracking.png',en:'Cartesian trajectory tracking and error on x/y/z',zh:'笛卡尔空间 x/y/z 轨迹跟踪与误差'},
+      {file:'arm-edge.png',en:'Desired trajectory extracted by Canny edge detection',zh:'Canny 边缘检测提取的期望轨迹'},
+      {file:'arm-path.png',en:'Trajectory points ordered by the greedy pass',zh:'贪心算法排序后的轨迹点访问顺序'},
+      {file:'arm-workspace.png',en:'Workspace envelope from Monte Carlo sampling',zh:'蒙特卡洛法求出的工作空间包络面'},
+      {file:'trajectory-result.png',en:'Trajectory extraction and fitting result',zh:'轨迹提取与拟合结果'}
+    ],
     chip: [{file:'fpga-prototype.png',en:'FPGA combination lock · Hardware demonstration',zh:'FPGA 数字密码锁 · 实物演示'}]
   },
   skills: ['Python / PyTorch', 'MATLAB / Simulink', 'ROS', 'OpenCV', 'CAD / 3D printing', 'PCB / Embedded'],
