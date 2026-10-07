@@ -13,7 +13,22 @@
   const tags = a => a.map(x=>`<span>${esc(x)}</span>`).join('');
   const timeline = a => a.map(x=>`<article class="timeline-item"><span class="date">${esc(x.date)}</span><h3>${esc(x.title)}</h3><h4>${esc(x.subtitle)}</h4><p>${esc(x.text)}</p></article>`).join('');
   function photo(m,cover){
+    if(m.video){
+      return `<div class="video-wrap ${cover?'cover':''}"><video src="assets/home/photos/${esc(m.video)}" autoplay muted loop playsinline preload="metadata" aria-label="${esc(m[lang])}"></video></div>`;
+    }
     return `<button class="photo-button ${cover?'cover':'thumbnail'}" data-image="${esc(m.file)}" data-caption="${esc(m[lang])}" aria-label="${lang==='zh'?'放大图片：':'Enlarge image: '}${esc(m[lang])}"><img src="assets/home/photos/${esc(m.file)}" alt="${esc(m[lang])}" loading="lazy" decoding="async"></button>`;
+  }
+  let revealDone = false;
+  function setupReveal(){
+    if(revealDone || matchMedia('(prefers-reduced-motion: reduce)').matches){
+      document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+      revealDone = true; return;
+    }
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
+    revealDone = true;
   }
   function render(){
     const d=PROFILE[lang];document.documentElement.lang=lang;
@@ -24,8 +39,9 @@
     if($('#project-grid')) $('#project-grid').innerHTML=d.projects.map(p=>{
       const media=PROFILE.media[p.art]||[];
       const cover=media.length ? `<div class="project-art project-photo">${photo(media[0],true)}<span class="photo-type">${esc(p.type)}</span></div><p class="photo-caption">${esc(media[0][lang])}</p>` : `<div class="project-art" aria-hidden="true"><span class="label">${esc(p.type)}</span><svg viewBox="0 0 520 180" fill="none" stroke="#536e5c" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${drawings[p.art]}</svg><span class="number">${p.id}</span></div><p class="photo-caption">${lang==='zh'?'感知原理示意图':'Sensing concept illustration'}</p>`;
-      const gallery=media.slice(1).map(m=>`<figure>${photo(m,false)}<figcaption>${esc(m[lang])}</figcaption></figure>`).join('');
-      return `<article class="project">${cover}<div class="project-body"><span class="project-meta">${esc(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p><div class="tags">${tags(p.tags)}</div><details><summary>${esc(d.details)}</summary><ul>${p.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${gallery?`<div class="project-gallery">${gallery}</div>`:''}</details></div></article>`;
+      const gallery=media.slice(1).map(m=>`<figure class="${m.video?'has-video':''}">${photo(m,false)}<figcaption>${esc(m[lang])}</figcaption></figure>`).join('');
+      const videoNote=media.some(m=>m.video)?`<span class="video-note">${esc(d.videoLabel)} · ${esc(d.videoLabelHint)}</span>`:'';
+      return `<article class="project reveal">${cover}<div class="project-body"><span class="project-meta">${esc(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p><div class="tags">${tags(p.tags)}</div><details><summary>${esc(d.details)}</summary><ul>${p.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${videoNote}${gallery?`<div class="project-gallery">${gallery}</div>`:''}</details></div></article>`;
     }).join('');
     if($('#experience-list')) $('#experience-list').innerHTML=timeline(d.experience);
     if($('#education-list')) $('#education-list').innerHTML=timeline(d.education);
@@ -42,6 +58,7 @@
       $('.viewer-close').setAttribute('aria-label',lang==='zh'?'关闭图片':'Close image');
     }
     if($('#year'))$('#year').textContent=new Date().getFullYear();
+    setupReveal();
   }
   $('#language').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('portfolio-language',lang);}catch{}const u=new URL(location);u.searchParams.set('lang',lang);history.replaceState(null,'',u);render();});
   if($('#print'))$('#print').addEventListener('click',()=>window.print());
@@ -52,5 +69,7 @@
     viewer.addEventListener('click',e=>{if(e.target===viewer)viewer.close();});
     viewer.addEventListener('close',()=>document.body.classList.remove('viewing-image'));
   }
+  const header=$('.header');
+  if(header){ addEventListener('scroll',()=>header.classList.toggle('scrolled',scrollY>10),{passive:true}); }
   render();
 })();
