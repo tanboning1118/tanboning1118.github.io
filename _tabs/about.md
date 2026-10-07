@@ -19,5 +19,5 @@ I began working in robotics in 2024 and currently focus on learning-based method
 
 ## Contact
 
-- Email: [tanponing@gmail.com](mailto:tanponing@gmail.com)
+- Email: [tanews@163.com](mailto:tanews@163.com)
 - GitHub: [tanboning1118](https://github.com/tanboning1118)

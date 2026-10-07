@@ -1,0 +1,36 @@
+(() => {
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let lang = new URLSearchParams(location.search).get('lang');
+  if (!['en','zh'].includes(lang)) { try { lang=localStorage.getItem('portfolio-language'); } catch {} }
+  if (!['en','zh'].includes(lang)) lang='en';
+  const drawings={
+    exo:'<path d="M250 25L230 78L276 110L255 157" stroke-width="22"/><path d="M277 23L255 77L299 109L281 157" stroke-width="4"/><circle cx="263" cy="99" r="20" fill="#e4e9db" stroke-width="4"/><circle cx="263" cy="99" r="8"/><path d="M192 62H224M302 124H335" stroke-dasharray="3 4"/><circle cx="192" cy="62" r="4"/><circle cx="335" cy="124" r="4"/>',
+    arm:'<path d="M160 153H315M230 151V112L306 76L263 30L325 23" stroke-width="12"/><circle cx="230" cy="112" r="13" fill="#e2e7e8" stroke-width="3"/><circle cx="306" cy="76" r="13" fill="#e2e7e8" stroke-width="3"/><path d="M160 103C183 16 350 152 365 51" stroke-width="2" stroke-dasharray="4 5"/>',
+    radar:'<circle cx="258" cy="94" r="18" fill="#738765"/><circle cx="258" cy="94" r="42"/><circle cx="258" cy="94" r="67"/><circle cx="258" cy="94" r="91" stroke-dasharray="3 5"/><path d="M258 94L319 49" stroke-width="3"/><circle cx="313" cy="54" r="6" fill="#e1b983"/>',
+    chip:'<rect x="214" y="43" width="92" height="92" rx="8" stroke-width="3"/><rect x="237" y="65" width="47" height="47" rx="3"/><path d="M225 22V43M243 22V43M261 22V43M280 22V43M297 22V43M225 135V157M243 135V157M261 135V157M280 135V157M297 135V157M192 55H214M192 77H214M192 99H214M192 122H214M306 55H328M306 77H328M306 99H328M306 122H328" stroke-width="3"/>'
+  };
+  const tags = a => a.map(x=>`<span>${esc(x)}</span>`).join('');
+  const timeline = a => a.map(x=>`<article class="timeline-item"><span class="date">${esc(x.date)}</span><h3>${esc(x.title)}</h3><h4>${esc(x.subtitle)}</h4><p>${esc(x.text)}</p></article>`).join('');
+  function render(){
+    const d=PROFILE[lang];document.documentElement.lang=lang;
+    document.querySelectorAll('[data-t]').forEach(el=>{el.textContent=d[el.dataset.t]||'';});
+    $('#language').textContent=lang==='en'?'中文':'EN';$('#language').setAttribute('aria-label',lang==='en'?'切换到中文':'Switch to English');
+    if($('#interests')) $('#interests').innerHTML=tags(d.interests);
+    if($('#skills')) $('#skills').innerHTML=tags(PROFILE.skills);
+    if($('#project-grid')) $('#project-grid').innerHTML=d.projects.map(p=>`<article class="project"><div class="project-art" aria-hidden="true"><span class="label">${esc(p.type)}</span><svg viewBox="0 0 520 180" fill="none" stroke="#536e5c" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${drawings[p.art]}</svg><span class="number">${p.id}</span></div><div class="project-body"><span class="project-meta">${esc(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p><div class="tags">${tags(p.tags)}</div><details><summary>${esc(d.details)}</summary><ul>${p.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details></div></article>`).join('');
+    if($('#experience-list')) $('#experience-list').innerHTML=timeline(d.experience);
+    if($('#education-list')) $('#education-list').innerHTML=timeline(d.education);
+    if($('#awards')) $('#awards').innerHTML=d.awards.map(x=>`<li>${esc(x)}</li>`).join('');
+    if($('#email-link')){$('#email-link').href='mailto:'+PROFILE.email;$('#email-link').textContent=PROFILE.email+' ↗';}
+    if($('#cv-content')){
+      $('#cv-content').innerHTML=`<div class="cv-name"><h1>Boning Tan <span>谭泊宁</span></h1><p>${esc(d.role)}</p><p><a href="mailto:${esc(PROFILE.email)}">${esc(PROFILE.email)}</a> · <a href="https://tanboning1118.github.io/">tanboning1118.github.io</a> · <a href="https://github.com/tanboning1118">GitHub</a></p></div><h2>${esc(d.educationLabel)}</h2>${timeline(d.education)}<h2>${esc(d.experienceLabel)}</h2>${timeline(d.experience)}<h2>${esc(d.publication)}</h2><article><p>Guang Chen, Binyao Zhang, <strong>Boning Tan</strong>, Weizhong Yuan. Electric Eel-Inspired Elastomer-Encapsulated Hydrogel Sensor with Superior Anti-Swelling, Self-Adhesion, and Electrical Stability for Diverse Underwater Applications. <em>Small</em>, 21(34), 2025. <a href="https://doi.org/10.1002/smll.202503207">doi:10.1002/smll.202503207</a></p><p>${esc(d.paperContribution)}</p></article><h2>${esc(d.projectsHeading)}</h2>${d.projects.map(p=>`<article class="cv-project"><div class="cv-project-title"><h3>${esc(p.title)}</h3><span>${esc(p.date)}</span></div><ul>${p.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></article>`).join('')}<h2>${esc(d.awardsLabel)}</h2><ul>${d.awards.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><h2>${esc(d.toolkit)}</h2><p>${PROFILE.skills.map(esc).join(' · ')}</p><p class="cv-updated">${lang==='en'?'Updated':'更新'}: ${PROFILE.updated}</p>`;
+    }
+    document.querySelectorAll('a[href^="cv.html"]').forEach(a=>a.href='cv.html?lang='+lang);
+    document.querySelectorAll('[data-pdf]').forEach(a=>{a.href=`assets/home/Boning-Tan-CV-${lang}.pdf`;a.textContent=lang==='en'?'Download PDF ↓':'下载 PDF ↓';});
+    if($('#year'))$('#year').textContent=new Date().getFullYear();
+  }
+  $('#language').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('portfolio-language',lang);}catch{}const u=new URL(location);u.searchParams.set('lang',lang);history.replaceState(null,'',u);render();});
+  if($('#print'))$('#print').addEventListener('click',()=>window.print());
+  render();
+})();
