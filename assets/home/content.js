@@ -1,6 +1,12 @@
 /* Edit this file to update both the homepage and the printable CV. */
 window.PROFILE = {
-  email: 'tanews@163.com', updated: '2026-10-07',
+  email: 'tanponing@gmail.com', updated: '2026-10-07',
+  media: {
+    hero: {file:'dexhand-grasp.png',en:'Dexhand grasping a drone model · Competition prototype',zh:'Dexhand 灵巧手抓取无人机模型 · 竞赛项目实物'},
+    exo: [{file:'exoskeleton-test.png',en:'Knee flexion experiment with the soft exoskeleton prototype',zh:'柔性外骨骼原型机膝关节屈伸实验'}, {file:'exoskeleton-winch.png',en:'Bidirectional winch design',zh:'正反转双控绞盘设计'}, {file:'exoskeleton-cuff.png',en:'Wearable cuff and compliant mechanism design',zh:'腿部穿戴与柔性机构设计'}, {file:'exoskeleton-pcb.png',en:'Power distribution and emergency-stop PCB design',zh:'分线板与急停开关板 PCB 设计'}],
+    arm: [{file:'robot-arm-cad.png',en:'IRB2600 robot arm · SolidWorks model',zh:'IRB2600 机械臂 · SolidWorks 建模'}, {file:'trajectory-result.png',en:'Trajectory extraction and fitting result',zh:'轨迹提取与拟合结果'}],
+    chip: [{file:'fpga-prototype.png',en:'FPGA combination lock · Hardware demonstration',zh:'FPGA 数字密码锁 · 实物演示'}]
+  },
   skills: ['Python', 'MATLAB / Simulink', 'ROS', 'CNN', 'CAD / 3D printing', 'PCB / Embedded systems'],
   en: {
     navResearch:'Research',navProjects:'Projects',navAbout:'Experience',navContact:'Contact',navCV:'View CV ↗',role:"MASTER'S STUDENT · TONGJI UNIVERSITY",

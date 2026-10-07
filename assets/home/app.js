@@ -12,13 +12,21 @@
   };
   const tags = a => a.map(x=>`<span>${esc(x)}</span>`).join('');
   const timeline = a => a.map(x=>`<article class="timeline-item"><span class="date">${esc(x.date)}</span><h3>${esc(x.title)}</h3><h4>${esc(x.subtitle)}</h4><p>${esc(x.text)}</p></article>`).join('');
+  function photo(m,cover){
+    return `<button class="photo-button ${cover?'cover':'thumbnail'}" data-image="${esc(m.file)}" data-caption="${esc(m[lang])}" aria-label="${lang==='zh'?'放大图片：':'Enlarge image: '}${esc(m[lang])}"><img src="assets/home/photos/${esc(m.file)}" alt="${esc(m[lang])}" loading="lazy" decoding="async"></button>`;
+  }
   function render(){
     const d=PROFILE[lang];document.documentElement.lang=lang;
     document.querySelectorAll('[data-t]').forEach(el=>{el.textContent=d[el.dataset.t]||'';});
     $('#language').textContent=lang==='en'?'中文':'EN';$('#language').setAttribute('aria-label',lang==='en'?'切换到中文':'Switch to English');
     if($('#interests')) $('#interests').innerHTML=tags(d.interests);
     if($('#skills')) $('#skills').innerHTML=tags(PROFILE.skills);
-    if($('#project-grid')) $('#project-grid').innerHTML=d.projects.map(p=>`<article class="project"><div class="project-art" aria-hidden="true"><span class="label">${esc(p.type)}</span><svg viewBox="0 0 520 180" fill="none" stroke="#536e5c" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${drawings[p.art]}</svg><span class="number">${p.id}</span></div><div class="project-body"><span class="project-meta">${esc(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p><div class="tags">${tags(p.tags)}</div><details><summary>${esc(d.details)}</summary><ul>${p.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details></div></article>`).join('');
+    if($('#project-grid')) $('#project-grid').innerHTML=d.projects.map(p=>{
+      const media=PROFILE.media[p.art]||[];
+      const cover=media.length ? `<div class="project-art project-photo">${photo(media[0],true)}<span class="photo-type">${esc(p.type)}</span></div><p class="photo-caption">${esc(media[0][lang])}</p>` : `<div class="project-art" aria-hidden="true"><span class="label">${esc(p.type)}</span><svg viewBox="0 0 520 180" fill="none" stroke="#536e5c" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${drawings[p.art]}</svg><span class="number">${p.id}</span></div><p class="photo-caption">${lang==='zh'?'感知原理示意图':'Sensing concept illustration'}</p>`;
+      const gallery=media.slice(1).map(m=>`<figure>${photo(m,false)}<figcaption>${esc(m[lang])}</figcaption></figure>`).join('');
+      return `<article class="project">${cover}<div class="project-body"><span class="project-meta">${esc(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p><div class="tags">${tags(p.tags)}</div><details><summary>${esc(d.details)}</summary><ul>${p.details.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${gallery?`<div class="project-gallery">${gallery}</div>`:''}</details></div></article>`;
+    }).join('');
     if($('#experience-list')) $('#experience-list').innerHTML=timeline(d.experience);
     if($('#education-list')) $('#education-list').innerHTML=timeline(d.education);
     if($('#awards')) $('#awards').innerHTML=d.awards.map(x=>`<li>${esc(x)}</li>`).join('');
@@ -28,9 +36,21 @@
     }
     document.querySelectorAll('a[href^="cv.html"]').forEach(a=>a.href='cv.html?lang='+lang);
     document.querySelectorAll('[data-pdf]').forEach(a=>{a.href=`assets/home/Boning-Tan-CV-${lang}.pdf`;a.textContent=lang==='en'?'Download PDF ↓':'下载 PDF ↓';});
+    if($('#hero-photo-caption')){
+      $('#hero-photo-caption').textContent=PROFILE.media.hero[lang];
+      const hero=$('.hero-image-button');hero.dataset.caption=PROFILE.media.hero[lang];hero.setAttribute('aria-label',(lang==='zh'?'放大图片：':'Enlarge image: ')+PROFILE.media.hero[lang]);hero.querySelector('img').alt=PROFILE.media.hero[lang];
+      $('.viewer-close').setAttribute('aria-label',lang==='zh'?'关闭图片':'Close image');
+    }
     if($('#year'))$('#year').textContent=new Date().getFullYear();
   }
   $('#language').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('portfolio-language',lang);}catch{}const u=new URL(location);u.searchParams.set('lang',lang);history.replaceState(null,'',u);render();});
   if($('#print'))$('#print').addEventListener('click',()=>window.print());
+  const viewer=$('#image-viewer');
+  if(viewer){
+    document.addEventListener('click',e=>{const trigger=e.target.closest('[data-image]');if(!trigger)return;$('#viewer-image').src='assets/home/photos/'+trigger.dataset.image;$('#viewer-image').alt=trigger.dataset.caption;$('#image-caption').textContent=trigger.dataset.caption;viewer.showModal();document.body.classList.add('viewing-image');});
+    $('.viewer-close').addEventListener('click',()=>viewer.close());
+    viewer.addEventListener('click',e=>{if(e.target===viewer)viewer.close();});
+    viewer.addEventListener('close',()=>document.body.classList.remove('viewing-image'));
+  }
   render();
 })();
